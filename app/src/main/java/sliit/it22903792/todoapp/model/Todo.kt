@@ -9,7 +9,6 @@ data class Todo(@ColumnInfo(name = "title") val title:String,
                 @ColumnInfo(name = "description") val description:String,
                 @ColumnInfo(name = "priority") val priority:String,
                 @ColumnInfo(name = "deadline_date") val deadlineDate:Long,
-                @ColumnInfo(name = "deadline_time") val deadlineTime:Long,
                 @ColumnInfo(name = "time") val time:Long){
 
     @PrimaryKey(autoGenerate = true)

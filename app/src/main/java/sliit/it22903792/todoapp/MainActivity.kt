@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +21,9 @@ import sliit.it22903792.todoapp.database.repositories.TodoRepository
 import sliit.it22903792.todoapp.model.Todo
 import sliit.it22903792.todoapp.view_model.MainActivityViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TodoAdapter.OnItemEdit {
 
+    private lateinit var toolbar: MaterialToolbar
     private var viewModel:MainActivityViewModel? = null
     private var repository: TodoRepository? = null
 
@@ -43,9 +45,11 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         repository = TodoRepository(TodoDatabase.getInstance(this))
 
+        toolbar = findViewById(R.id.toolbar)
         todoRecyclerView = findViewById(R.id.todoRecyclerView)
         addTodoItemBtn = findViewById(R.id.addTodoItemBtn)
 
+        toolbar.title = "Todo"
         todoRecyclerView.setHasFixedSize(true)
         todoRecyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
 
@@ -57,6 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel!!.todoList.observe(this){
             val todoAdapter = TodoAdapter(this,it, viewModel!!)
+            todoAdapter.setItemEditListener(this)
             todoRecyclerView.adapter = todoAdapter
         }
 
@@ -80,5 +85,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onItemEdit(id: Int) {
+        val intent = Intent(this@MainActivity,AddTodoActivity::class.java)
+        intent.putExtra("id",id.toString())
+        addTodoLauncher.launch(intent)
+    }
 
 }
